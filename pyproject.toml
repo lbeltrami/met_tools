@@ -3,6 +3,6 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "myutils"
+name = "met_tools"
 version = "0.1.0"
 description = "My personal utilities for meteorological data processing"

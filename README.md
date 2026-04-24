@@ -1,6 +1,6 @@
-# met_utils
+# met_tools
 
-`met_utils` is my personal Python package that provides tools to extract, process, and visualize data from GRIB, BUFR and NetCDF files.
+`met_tools` is my personal Python package that provides tools to extract, process, and visualize data from GRIB, BUFR and NetCDF files.
 Main features allow for:
 - extracting meteorological values on specific locations from GRIB and NetCDF files;
 - dealing with sounding data, from BUFR to dataframe and beyond;
