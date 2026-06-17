@@ -35,6 +35,8 @@ def extract_points_1D(da, var, time_var, locations, source = None):
     else:
         time_val = time_var.item() if hasattr(time_var, "item") else time_var
 
+    time_val = pd.Timestamp(da[time_var].values)
+
     for name, coords in locations.items():
 
         value = da.sel( 
