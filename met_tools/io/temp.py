@@ -8,6 +8,8 @@ def sond_download_bufr(output_path, start, end, blo=16, sta=None):
     An optional station filter can be applied using the last three digits
     of the WMO station ID.
 
+    BE AWARE: the function requires arki-query to be installed and available in the system PATH.
+
     Parameters
     ----------
     output_path : str
