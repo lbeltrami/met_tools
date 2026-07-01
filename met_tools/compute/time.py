@@ -1,16 +1,16 @@
 def adjust_time(dt):
     """
-    Normalize radiosonde launch times to standard synoptic hours (00 and 12 UTC).
+    Refer radiosonde launch times to standard synoptic hours 00 and 12 UTC.
 
-    Radiosonde observations are not always performed exactly at 00:00 or 12:00 UTC.
-    Instead, launches typically occur within time windows around these reference hours.
+    Radiosondes are launched approximately 40-50 minutes before the synoptic hour 
+    to assure that they reach the tropopause around the synoptic main hour. 
     This function maps the actual launch time to the corresponding synoptic time:
     - Launches between 09:00 and 15:00 UTC → mapped to 12:00 UTC (same day)
     - Launches between 21:00 and 23:59 UTC → mapped to 00:00 UTC (next day)
     Any timestamps outside these windows are considered invalid and set to NaT.
 
     Args:
-        dt (pandas.Timestamp): Original datetime of the radiosonde launch.
+        dt (pandas.Timestamp): Original UTC datetime of the radiosonde launch.
 
     Returns:
     pandas.Timestamp or pandas.NaT
@@ -22,7 +22,7 @@ def adjust_time(dt):
     hour = dt.hour
 
     # morning launches → 12 UTC same day
-    if 9 <= hour <= 15:
+    if 9 <= hour <= 12:
         return dt.normalize() + pd.Timedelta(hours=12)
     # evening launches → 00 UTC next day
     elif 21 <= hour <= 23:
