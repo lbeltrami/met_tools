@@ -75,7 +75,7 @@ def extract_points_1D(da, var, time_var, locations, source = None):
 
     return pd.DataFrame(records)
 
-# ---------------------------------------------------------------------------------------------------
+
 
 def extract_points_2D(ds, var, time_var, locations, source = None):
     """

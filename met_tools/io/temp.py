@@ -54,7 +54,7 @@ def sond_download_bufr(output_path, start, end, blo=16, sta=None):
 
     subprocess.run(cmd, check=True)
 
-# ---------------------------------------------------------------------------------------------------
+
 
 def split_bufr(path, n_chunks, outdir):
     """
@@ -102,7 +102,7 @@ def split_bufr(path, n_chunks, outdir):
 
     return chunk_paths
 
-# ---------------------------------------------------------------------------------------------------
+
 
 def read_bufr_chunk(path, columns, filters, reader="temp"):
     """
@@ -125,7 +125,7 @@ def read_bufr_chunk(path, columns, filters, reader="temp"):
     return pdbufr.read_bufr(str(path), reader=reader, columns=columns,
                              geopotential='both', filters=filters)
 
-# ---------------------------------------------------------------------------------------------------
+
 
 def bufr_std_columns_set():
     """
@@ -144,7 +144,7 @@ def bufr_std_columns_set():
 
     return ["time", "stnid", "latlon", "elevation", "plev_offset"]
 
-# ---------------------------------------------------------------------------------------------------
+
 
 def sond_decode_bufr(path, columns=None, filters=None, n_workers=8, reader="temp"):
     """

@@ -8,6 +8,8 @@ ALC_COORD = {
     "Tito Scalo": {"lat": 40.60139, "lon": 15.72389},
 }
 
+
+
 # coordinates of the Italian soundings stations
 SOND_COORD = {
     "Cuneo Levaldigi": {"lat": 44.5386, "lon": 7.6125},
@@ -19,6 +21,8 @@ SOND_COORD = {
     "Trapani Birgi": {"lat": 37.9114, "lon": 12.4878},
     "Cagliari Decimomannu": {"lat": 39.3540, "lon": 8.9725},
 }
+
+
 
 # WMO codes for the Italian soundings stations based on BUFR classification
 SOND_CODE = {

@@ -25,7 +25,7 @@ def mixing_ratio_from_dewpoint(p, Td):
 
     return 0.622 * e / (p - e)
 
-# ----------------------------------------------------------------------------
+
 
 def virtual_potential_temperature(p, T, Td):
     """
@@ -61,7 +61,7 @@ def virtual_potential_temperature(p, T, Td):
 
     return theta * (1 + 0.61 * q)
 
-# ----------------------------------------------------------------------------
+
 
 def hydrostatic_height(p, T, Td):
     """
