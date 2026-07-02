@@ -4,54 +4,74 @@ def extract_points_1D(da, var, time_var, locations, source = None):
     e.g. a GRIB or NetCDF file that has been already opened with xarray.open_dataset.
 
     The label "1D" means that lat/lon coordinates are 1-dimensional arrays, instead of
-    being 2-dimensional arrays (e.g. NetCDF usually report latitude as 
-    a 2D field with dims (west_east, sout_north)).
+    being 2-dimensional arrays (e.g. NetCDF usually report latitude as a 2D field 
+    with dims (west_east, sout_north)).
+
+    Handles both single-layer variables (e.g. surface or 2m fields, which reduce to a
+    scalar after selecting lat/lon) and multi-layer variables that still carry a
+    'generalVerticalLayer' dimension after selecting lat/lon (e.g. ICON native-level
+    fields such as pressure, temperature, specific humidity). In the multi-layer case,
+    one row per level is returned and the level index is stored in a 'generalVerticalLayer'
+    column.
 
     Args:
-        da (xarray.DataArray): a DataArray object with 
+        da (xarray.DataArray): a DataArray object with
                                 dimensions 'latitude', 'longitude' and attribute 'time'.
         var (str): Name of the variable to extract. BE AWARE: it does not necessarly coincide with
-                    the shortName. Thus use 'da.variables' to check the name of the variables in the file.  
+                    the shortName. Use 'da.variables' to check the eccodes-like name of the variables.
         time_var (str): Name of the date_time variable in the DataArray.
-        locations (dict): Dictionary with names and coordinates of locations of interest stored as: 
+        locations (dict): Dictionary with names and coordinates of locations of interest stored as:
                             {'Name1': {'lat'0 xx, 'lon': yy}, 'Name2': {'lat': xx, 'lon': yy}, ...}.
-        source (str): String reporting what is the source of the data e.g. 
+        source (str): String reporting what is the source of the data e.g.
                         'Model ...', 'Instrument ...'.
 
     Returns:
-        pandas.DataFrame: a DataFrame long-structured with columns: 
-                            ['time', 'location', 'source', 'variable', 'value'].
+        pandas.DataFrame: a DataFrame long-structured with columns:
+                            ['time', 'location', 'source', 'variable', 'value'] for single-layer
+                            variables, plus a 'generalVerticalLayer' column for multi-layer variables.
     """
 
-    import numpy as np
     import pandas as pd
 
     records = []
 
     da = da[var]
 
-    if isinstance(time_var, str) and time_var in da.coords:
-        time_val = da[time_var].values.item()
-    else:
-        time_val = time_var.item() if hasattr(time_var, "item") else time_var
-
     time_val = pd.Timestamp(da[time_var].values)
+
+    level_dim = "generalVerticalLayer"
+    has_levels = level_dim in da.dims
 
     for name, coords in locations.items():
 
-        value = da.sel( 
-            latitude=coords['lat'], 
-            longitude=coords['lon'], 
+        point = da.sel(
+            latitude=coords['lat'],
+            longitude=coords['lon'],
             method='nearest'
-        ).values.item()
+        )
 
-        records.append({
-            'time': time_val,
-            'location': name,
-            'source': source,
-            'variable': var,
-            'value': value
-        })
+        if has_levels:
+            for level in point[level_dim].values:
+                value = point.sel(**{level_dim: level}).values.item()
+
+                records.append({
+                    'time': time_val,
+                    'location': name,
+                    'source': source,
+                    'variable': var,
+                    level_dim: int(level),
+                    'value': value
+                })
+        else:
+            value = point.values.item()
+
+            records.append({
+                'time': time_val,
+                'location': name,
+                'source': source,
+                'variable': var,
+                'value': value
+            })
 
     return pd.DataFrame(records)
 
