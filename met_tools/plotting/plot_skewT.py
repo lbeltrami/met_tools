@@ -79,6 +79,7 @@ def plot_skewT(sounding, out_png):
     # just to be sure, sort the sounding by station, datetime and pressure (descending)
     sounding = sounding.sort_values(["stnid", "time", "pressure"], ascending=[True, True, False])
 
+    # set a figure dimension coherent with the number of profiles
     groups = list(sounding.groupby(["stnid", "time"]))
     n_plots = len(groups)
     if n_plots == 0:
