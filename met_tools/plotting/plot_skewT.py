@@ -11,7 +11,7 @@ COLUMN_ALIASES = {
 
 
 
-def standardize_columns(sounding):
+def _standardize_columns(sounding):
     """
     Rename known column aliases (e.g. 'pres' -> 'pressure', 'WMO station id' -> 'stnid')
     to the canonical names expected by the following plot_skewT function.
@@ -74,7 +74,7 @@ def plot_skewT(sounding, out_png):
     from metpy.calc import wind_components
 
     # map alternative column names to the canonical ones
-    sounding = standardize_columns(sounding)
+    sounding = _standardize_columns(sounding)
 
     # just to be sure, sort the sounding by station, datetime and pressure (descending)
     sounding = sounding.sort_values(["stnid", "time", "pressure"], ascending=[True, True, False])

@@ -56,7 +56,7 @@ def sond_download_bufr(output_path, start, end, blo=16, sta=None):
 
 
 
-def split_bufr(path, n_chunks, outdir):
+def _split_bufr(path, n_chunks, outdir):
     """
     Split a BUFR file into n_chunks files of (almost) equal message count.
 
@@ -104,11 +104,11 @@ def split_bufr(path, n_chunks, outdir):
 
 
 
-def read_bufr_chunk(path, columns, filters, reader="temp"):
+def _read_bufr_chunk(path, columns, filters, reader="temp"):
     """
     Decode a single BUFR chunk file into a DataFrame using pdbufr (https://pdbufr.readthedocs.io/en/latest/).
 
-    Meant to be run in a worker process by sond_decode_bufr, once per chunk file produced by split_bufr.
+    Meant to be run in a worker process by sond_decode_bufr, once per chunk file produced by _split_bufr.
 
     Args:
         path (str or pathlib.Path): Path to the BUFR chunk file.
@@ -127,7 +127,7 @@ def read_bufr_chunk(path, columns, filters, reader="temp"):
 
 
 
-def bufr_std_columns_set():
+def _bufr_std_columns_set():
     """
     Standard set of pdbufr columns to decode from a TEMP sounding BUFR message.
     Documentation at https://pdbufr.readthedocs.io/en/latest/guide/readers/temp.html
@@ -154,7 +154,7 @@ def sond_decode_bufr(path, columns=None, filters=None, n_workers=8, reader="temp
 
     Decoding the BUFR data section is what makes pdbufr.read_bufr slow on large files.
     The file is first split into n_workers chunks without decoding (cheap, see
-    split_bufr), then each chunk is decoded in its own process.
+    _split_bufr), then each chunk is decoded in its own process.
 
     Args:
         path (str): Path to the input BUFR file.
@@ -175,14 +175,14 @@ def sond_decode_bufr(path, columns=None, filters=None, n_workers=8, reader="temp
     import pandas as pd
 
     if columns is None:
-        columns = bufr_std_columns_set()
+        columns = _bufr_std_columns_set()
 
     with tempfile.TemporaryDirectory(dir=str(Path(path).parent)) as tmpdir:
-        chunk_paths = split_bufr(path, n_workers, tmpdir)
+        chunk_paths = _split_bufr(path, n_workers, tmpdir)
 
         with ProcessPoolExecutor(max_workers=n_workers) as executor:
             parts = list(executor.map(
-                partial(read_bufr_chunk, columns=columns, filters=filters, reader=reader),
+                partial(_read_bufr_chunk, columns=columns, filters=filters, reader=reader),
                 chunk_paths
             ))
 
