@@ -15,3 +15,27 @@ def plot_style():
     plt.rc('ytick', labelsize=12)  # Y tick labels
     plt.rc('legend', fontsize=16)  # legend
     plt.rc('figure', titlesize=20) # figure title
+
+
+
+def rain_colormap():
+    """
+    Discrete colormap inspired by Capecchi et al. (2022).
+
+    Colors:
+    cyan -> light blue -> dark blue -> magenta -> orange -> red -> dark red
+    """
+
+    from matplotlib.colors import ListedColormap
+
+    colors = [
+        "#22DDE0",  # cyan
+        "#1F84F0",  # light blue
+        "#1212FF",  # dark blue
+        "#F020F0",  # magenta
+        "#FF8800",  # orange
+        "#FF0000",  # red
+        "#C00000",  # dark red
+    ]
+
+    return ListedColormap(colors, name="rain_colormap")
