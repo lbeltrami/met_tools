@@ -20,7 +20,7 @@ def plot_style():
 
 def rain_colormap():
     """
-    Discrete colormap inspired by Capecchi et al. (2022).
+    Discrete colormap suitable for rainfall fields, inspired by Capecchi et al. (2022).
 
     Colors:
     cyan -> light blue -> dark blue -> magenta -> orange -> red -> dark red
