@@ -23,12 +23,13 @@ def rain_colormap():
     Discrete colormap suitable for rainfall fields, inspired by Capecchi et al. (2022).
 
     Colors:
-    cyan -> light blue -> dark blue -> magenta -> orange -> red -> dark red
+    white -> cyan -> light blue -> dark blue -> magenta -> orange -> red -> dark red
     """
 
     from matplotlib.colors import ListedColormap
 
     colors = [
+        "#FFFFFF",  # white
         "#22DDE0",  # cyan
         "#1F84F0",  # light blue
         "#1212FF",  # dark blue
