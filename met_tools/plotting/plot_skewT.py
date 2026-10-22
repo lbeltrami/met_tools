@@ -1,37 +1,39 @@
-# accepted alternative names for each canonical column: the first match found is renamed
-COLUMN_ALIASES = {
-    "stnid": ["WMO station id", "WMO_station_id", "station", "location"],
-    "time": ["datetime", "reftime"],
-    "pressure": ["pres", "p"],
-    "t": ["temperature"],
-    "td": ["dewpoint", "dew_point"],
-    "wind_speed": ["ws"],
-    "wind_dir": ["wind_direction", "wd"],
-}
-
-
-
-def _standardize_columns(sounding):
+def plot_skewT(sounding, out_png):
     """
-    Rename known column aliases (e.g. 'pres' -> 'pressure', 'WMO station id' -> 'stnid')
-    to the canonical names expected by the following plot_skewT function.
+    Plot a grid of many SkewT-logP diagrams, one per (station, time) profile, and save it as PNG.
+
+    It's usefull to inspect many profiles in one shot.
 
     Parameters
     ----------
     sounding : pandas.DataFrame
-        Profile data with one row per vertical level.
-
-    Returns
-    -------
-    pandas.DataFrame
-        The same dataframe with canonical column names.
-
-    Raises
-    ------
-    KeyError
-        If a required column is missing under any known name.
+        Profile data with one row per vertical level and columns:
+        'stnid', 'time', 'pressure' (Pa), 't' (K), 'td' (K),
+        'wind_speed' (m/s), 'wind_dir' (deg).
+        Some alternative column names (those reported in 'COLUMN_ALIASES') are accepted too.
+    out_png : str or pathlib.Path
+        Path of the output PNG file.
     """
 
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    from metpy.plots import SkewT
+    from metpy.units import units
+    from metpy.calc import wind_components
+
+    # accepted alternative names for each canonical column: the first match found is renamed
+    COLUMN_ALIASES = {
+        "stnid": ["WMO station id", "WMO_station_id", "station", "location"],
+        "time": ["datetime", "reftime"],
+        "pressure": ["pres", "p"],
+        "t": ["temperature"],
+        "td": ["dewpoint", "dew_point"],
+        "wind_speed": ["ws"],
+        "wind_dir": ["wind_direction", "wd"],
+    }
+
+    # map alternative column names (e.g. 'pres', 'WMO station id') to the canonical ones
     rename = {}
     for canonical, aliases in COLUMN_ALIASES.items():
         if canonical not in sounding.columns:
@@ -46,35 +48,6 @@ def _standardize_columns(sounding):
     if missing:
         raise KeyError(f"Missing required column(s) {missing}: "
                        f"expected one of the names in {({c: COLUMN_ALIASES[c] for c in missing})}.")
-
-    return sounding
-
-
-
-def plot_skewT(sounding, out_png):
-    """
-    Plot a grid of SkewT-logP diagrams, one per (station, time) profile, and save it to file.
-
-    Parameters
-    ----------
-    sounding : pandas.DataFrame
-        Profile data with one row per vertical level and columns:
-        'stnid', 'time', 'pressure' (Pa), 't' (K), 'td' (K),
-        'wind_speed' (m/s), 'wind_dir' (deg).
-        Known alternative column names (e.g. 'pres', 'WMO station id') are accepted too.
-    out_png : str or pathlib.Path
-        Path of the output PNG file.
-    """
-
-    import numpy as np
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    from metpy.plots import SkewT
-    from metpy.units import units
-    from metpy.calc import wind_components
-
-    # map alternative column names to the canonical ones
-    sounding = _standardize_columns(sounding)
 
     # just to be sure, sort the sounding by station, datetime and pressure (descending)
     sounding = sounding.sort_values(["stnid", "time", "pressure"], ascending=[True, True, False])
